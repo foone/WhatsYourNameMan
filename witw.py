@@ -1,7 +1,6 @@
 import pronouncing,random
 
-FIRSTWORD='carmen'
-SECONDWORD='san diego'
+WORDS='carmen sandy lego'.split()
 
 def nsyl(word):
 	if ' ' in word:
@@ -15,23 +14,26 @@ def get_stresses(word):
 			return set([parts[0][0] + parts[1][0]])
 	
 	return set(pronouncing.stresses_for_word(word))
-firstnum = nsyl(FIRSTWORD)
-secondnum = nsyl(SECONDWORD)
-firstwords = []
-secondwords = []
-first_stresses = get_stresses(FIRSTWORD)
-second_stresses = get_stresses(SECONDWORD)
+
+NUMS=[nsyl(w) for w in WORDS]
+words=[[] for _ in range(len(WORDS))]
+
+STRESSES=[get_stresses(w) for w in WORDS]
+print STRESSES
+
 for word in pronouncing.search('.*'):
 	if "'" in word:
 		continue
 	cnt = nsyl(word)
-	if cnt in (firstnum, secondnum):
+	if cnt in NUMS:
 		stresses = set(pronouncing.stresses_for_word(word))
-		if cnt==firstnum and stresses & first_stresses:
-			firstwords.append(word)
-		if cnt == secondnum and stresses & second_stresses:
-			secondwords.append(word)
-print len(firstwords)
-print len(secondwords)
+		for num,output,outstresses in zip(NUMS,words,STRESSES):
+			if num==cnt and stresses & outstresses:
+				output.append(word)
+print [len(w) for w in words]
 for i in range(50):
-	print random.choice(firstwords),random.choice(secondwords)
+	out=[]
+	for part in words:
+		out.append(random.choice(part))
+	print ' '.join(out)
+	
